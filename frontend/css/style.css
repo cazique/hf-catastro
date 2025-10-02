@@ -1,8 +1,171 @@
-:root{--hf-blue:#123F60;--hf-gold:#C7A578;--hf-bg:#f8f9fa}
-body{font-family:system-ui,Segoe UI,Arial;background:var(--hf-bg)}
-.navbar-brand{font-weight:700;color:#fff!important}
-.sidebar{background:#fff;border:1px solid #dee2e6;border-radius:8px;padding:16px}
-.result-card{border-left:4px solid var(--hf-blue);padding-left:10px;margin-bottom:8px}
-.section-title{color:var(--hf-blue);font-weight:600;margin-top:12px;margin-bottom:6px}
-.btn-hf{background:var(--hf-blue);color:#fff;border:none}
-.btn-hf:hover{background:#0e2d44}
+/*
+ * Estilos personalizados para el Sistema Catastral Hogar Familiar
+ * Colores corporativos:
+ * - Azul oscuro: #123F60
+ * - Dorado/Ocre: #C7A578
+ */
+
+:root {
+    --primary-color: #123F60;
+    --secondary-color: #C7A578;
+    --sidebar-width: 250px;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+#wrapper {
+    display: flex;
+}
+
+/* Sidebar */
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: var(--sidebar-width);
+    margin-left: -var(--sidebar-width);
+    transition: margin .25s ease-out;
+    background-color: var(--primary-color) !important;
+    color: white;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 1rem 1.25rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#sidebar-wrapper .logo {
+    height: 30px;
+    margin-right: 10px;
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 1rem 1.25rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#sidebar-wrapper .list-group-item.active {
+    background-color: rgba(0, 0, 0, 0.2) !important;
+    color: white;
+    border-left: 4px solid var(--secondary-color);
+}
+
+#sidebar-wrapper .list-group-item-action:hover,
+#sidebar-wrapper .list-group-item-action:focus {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: 0;
+}
+
+.sidebar-footer {
+    position: absolute;
+    bottom: 0;
+    width: var(--sidebar-width);
+    padding: 1rem;
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* Page Content */
+#page-content-wrapper {
+    flex: 1;
+    min-width: 0; /* Necesario para que flexbox funcione correctamente */
+    width: calc(100% - var(--sidebar-width));
+}
+
+#menu-toggle {
+    border: 1px solid #ddd;
+}
+
+/* Mapa */
+#map {
+    height: 65vh; /* Altura considerable para el mapa */
+    width: 100%;
+    border-radius: .25rem;
+}
+
+/* Tarjetas y resultados */
+.card {
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+#results-container {
+    overflow-y: auto;
+    max-height: 65vh; /* Misma altura que el mapa */
+}
+
+.result-item {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+.result-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.result-item dt {
+    font-weight: bold;
+    color: #555;
+}
+.result-item dd {
+    margin-left: 0;
+}
+
+/* Botones y formularios */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-primary:hover {
+    background-color: #0d304c;
+    border-color: #0d304c;
+}
+.btn-danger {
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+/* Utilidades y mejoras */
+.spinner-border {
+    margin-right: 5px;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: -var(--sidebar-width);
+    }
+}
+
+/* Accesibilidad */
+input:invalid {
+  border-color: #dc3545;
+}
+input:focus:invalid {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+input:valid {
+    border-color: #198754;
+}
+input:focus:valid {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}
