@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<consulta_dnp xmlns="http://www.catastro.meh.es/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<control>
+		<cucons>1</cucons>
+		<cucul>1</cucul>
+	</control>
+	<bico>
+		<bi>
+			<rc>
+				<pc1>0395809</pc1>
+				<pc2>VK6709N</pc2>
+				<car>0035</car>
+				<cc1>K</cc1>
+				<cc2>W</cc2>
+			</rc>
+			<ldt>AV BENIDORM, 11 Es:1 Pl:08 Pt:C 03540 ALACANT D'ALACANT/ALICANTE (ALICANTE)</ldt>
+			<debi>
+				<luso>Vivienda</luso>
+				<sfc>120</sfc>
+				<ant>1980</ant>
+			</debi>
+		</bi>
+		<lcons>
+			<cons>
+				<lourb>
+					<lo>
+						<pt>08</pt>
+						<pu>C</pu>
+						<lour>
+							<cd>VIVIENDA</cd>
+							<sfc>105</sfc>
+						</lour>
+					</lo>
+				</lourb>
+			</cons>
+			<cons>
+				<lourb>
+					<lo>
+						<pt>ZZ</pt>
+						<pu>ZZ</pu>
+						<lour>
+							<cd>APARCAMIENTO</cd>
+							<sfc>15</sfc>
+						</lour>
+					</lo>
+				</lourb>
+			</cons>
+		</lcons>
+	</bico>
+</consulta_dnp>

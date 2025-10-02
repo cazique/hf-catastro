@@ -1,0 +1,21 @@
+# Composer
+/vendor/
+composer.lock
+
+# Environment
+.env
+
+# Logs and caches
+/logs/
+/cache/
+*.log
+
+# IDEs and OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+/build/
+/dist/

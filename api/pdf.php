@@ -1,39 +1,76 @@
-
 <?php
-require_once __DIR__.'/../src/CatastroXMLParser.php';
-require_once __DIR__.'/../src/PDFGenerator.php';
 
-function http_get($url){
-  $ch=curl_init($url);
-  curl_setopt_array($ch,[CURLOPT_RETURNTRANSFER=>true,CURLOPT_TIMEOUT=>25,CURLOPT_FOLLOWLOCATION=>true,CURLOPT_USERAGENT=>'HF-Catastro/1.0']);
-  $out=curl_exec($ch);$code=curl_getinfo($ch,CURLINFO_HTTP_CODE);curl_close($ch);
-  if($out===false||$code>=400){ throw new Exception("Servicio remoto devolvió HTTP $code"); }
-  return $out;
+declare(strict_types=1);
+
+require_once __DIR__ . '/../src/bootstrap.php';
+
+use HogarFamiliar\SistemaCatastral\Core\ErrorHandler;
+use HogarFamiliar\SistemaCatastral\Catastro\HttpClient;
+use HogarFamiliar\SistemaCatastral\Catastro\CatastroParser;
+use HogarFamiliar\SistemaCatastral\Catastro\CatastroService;
+use HogarFamiliar\SistemaCatastral\Cache\CacheService;
+use HogarFamiliar\SistemaCatastral\Pdf\PdfGenerator;
+
+// Inicializar manejador de errores para HTML
+ErrorHandler::init(false);
+
+// --- Seguridad y Validación ---
+
+// 1. Solo permitir peticiones GET
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+    http_response_code(405);
+    die('<h1>Error 405: Método no permitido</h1><p>Use GET para solicitar el PDF.</p>');
 }
 
-try{
-  $rc = isset($_GET['rc']) ? preg_replace('/\s+/','',$_GET['rc']) : '';
-  if(!$rc) throw new Exception('Parámetro rc obligatorio');
+// 2. Obtener y sanitizar la Referencia Catastral
+$rc = $_GET['rc'] ?? '';
+$rc = trim(strtoupper(preg_replace('/[^a-zA-Z0-9]/', '', $rc)));
 
-  try{
-    $xml=http_get('https://ovc.catastro.meh.es/OVCServWeb/OVCWcfCallejero/COVCCallejero.svc/rest/Consulta_DNPRC?RC='.urlencode($rc));
-  }catch(Throwable $e){
-    $xml=http_get('https://ovc.catastro.meh.es/ovcservweb/OVCSWLocalizacionRC/OVCCallejero.asmx/Consulta_DNPRC?Provincia=&Municipio=&RC='.urlencode($rc));
-  }
+if (empty($rc)) {
+    http_response_code(400);
+    die('<h1>Error 400: Petición incorrecta</h1><p>La Referencia Catastral (rc) es obligatoria.</p>');
+}
+if (strlen($rc) < 14 || strlen($rc) > 20) {
+    http_response_code(400);
+    die('<h1>Error 400: Petición incorrecta</h1><p>La Referencia Catastral proporcionada no es válida.</p>');
+}
 
-  $parser=new CatastroXMLParser();
-  $data=$parser->parseSimple($xml,$rc);
+// --- Lógica de la Aplicación ---
 
-  $gen=new PDFGenerator();
-  $out=$gen->generarFicha($data);
+try {
+    // Verificar si Dompdf está disponible
+    if (!class_exists('Dompdf\Dompdf')) {
+        http_response_code(501);
+        die('<h1>Error 501: Funcionalidad no disponible</h1><p>La librería para generar PDF (Dompdf) no está instalada. Por favor, ejecute <code>composer install</code>.</p><p>Como alternativa, puede ver los datos en la <a href="../frontend/mapa.php">interfaz principal</a>.</p>');
+    }
 
-  if($out['type']==='pdf'){
-    header('Content-Type: application/pdf');
-    header('Content-Disposition: attachment; filename="'.$out['filename'].'"');
-    echo $out['bytes'];
-  }else{
-    header('Content-Type: text/html; charset=utf-8'); echo $out['bytes'];
-  }
-}catch(Throwable $e){
-  header('Content-Type: text/plain; charset=utf-8'); http_response_code(400); echo 'Error: '.$e->getMessage();
+    // Instanciar dependencias
+    $httpClient = new HttpClient();
+    $parser = new CatastroParser();
+    $cache = new CacheService();
+    $catastroService = new CatastroService($httpClient, $parser, $cache);
+
+    // Realizar la consulta
+    $resultado = $catastroService->consultarPorRC($rc);
+
+    // Generar el PDF si hay éxito
+    if ($resultado['success'] && !empty($resultado['data'])) {
+        // Usamos el primer inmueble encontrado para el informe
+        $datosInmueble = $resultado['data'][0];
+
+        $pdfGenerator = new PdfGenerator($datosInmueble, $rc);
+        $pdfGenerator->streamPdf();
+        exit;
+    } else {
+        // Mostrar un error amigable si no se encontraron datos
+        http_response_code(404);
+        $errorMsg = htmlspecialchars($resultado['error'] ?? 'No se encontraron datos para la referencia catastral proporcionada.');
+        die("<h1>Error 404: No se encontraron datos</h1><p>No se pudo generar el PDF porque no se encontraron datos para la RC <strong>{$rc}</strong>.</p><p>Motivo: {$errorMsg}</p>");
+    }
+
+} catch (\Exception $e) {
+    // El manejador de errores global se encargará de loguear el error.
+    // Mostramos un mensaje genérico al usuario.
+    http_response_code(500);
+    die('<h1>Error 500: Error del servidor</h1><p>Ha ocurrido un error inesperado al intentar generar el PDF.</p>');
 }

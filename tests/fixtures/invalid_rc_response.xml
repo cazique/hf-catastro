@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<err xmlns="http://www.catastro.meh.es/">
+	<cod>100</cod>
+	<des>Referencia catastral inválida</des>
+</err>
