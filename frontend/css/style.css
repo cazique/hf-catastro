@@ -1,0 +1,8 @@
+:root{--hf-blue:#123F60;--hf-gold:#C7A578;--hf-bg:#f8f9fa}
+body{font-family:system-ui,Segoe UI,Arial;background:var(--hf-bg)}
+.navbar-brand{font-weight:700;color:#fff!important}
+.sidebar{background:#fff;border:1px solid #dee2e6;border-radius:8px;padding:16px}
+.result-card{border-left:4px solid var(--hf-blue);padding-left:10px;margin-bottom:8px}
+.section-title{color:var(--hf-blue);font-weight:600;margin-top:12px;margin-bottom:6px}
+.btn-hf{background:var(--hf-blue);color:#fff;border:none}
+.btn-hf:hover{background:#0e2d44}

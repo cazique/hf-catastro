@@ -1,0 +1,9 @@
+{
+  "name": "hogarfamiliar/catastro",
+  "description": "Consulta Catastro (PHP + Leaflet) con PDF Dompdf para Hogar Familiar",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "dompdf/dompdf": "^3.1"
+  }
+}
